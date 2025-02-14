@@ -55,7 +55,7 @@ async function buildUserMessage(
 export async function POST(req: Request) {
   // Ask OpenAI for a streaming completion given the prompt
   const response = await openai.createChatCompletion({
-    model: "openai/gpt-3.5-turbo",
+    model: "openai/gpt-4o-mini",
     stream: true,
     temperature: 0,
     messages: [systemMessage, await buildUserMessage(req)],

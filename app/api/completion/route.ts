@@ -6,9 +6,16 @@ import {
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { CompletionRequestBody } from "@/lib/types";
 
-// Create an OpenAI API client
+// Create an OpenRouter API client
 const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseOptions: {
+    headers: {
+      "HTTP-Referer": process.env.SITE_URL || "http://localhost:3000", // Required for OpenRouter
+      "X-Title": "AI Plugin Template", // Optional, for OpenRouter analytics
+    },
+  },
+  basePath: "https://openrouter.ai/api/v1",
 });
 const openai = new OpenAIApi(config);
 
@@ -19,8 +26,8 @@ export const runtime = "edge";
 // https://platform.openai.com/docs/guides/gpt/chat-completions-api
 const systemMessage = {
   role: "system",
-  content: `You are an expert poet, you will be given a list of bulleted strings and 
-you will write a short and concise poem using some of the information in the list. 
+  content: `You are an expert poet, you will be given a list of bulleted strings and
+you will write a short and concise poem using some of the information in the list.
 Only respond with a poem, don't make the poem too long.`,
 } as const;
 
@@ -48,7 +55,7 @@ async function buildUserMessage(
 export async function POST(req: Request) {
   // Ask OpenAI for a streaming completion given the prompt
   const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "openai/gpt-3.5-turbo",
     stream: true,
     temperature: 0,
     messages: [systemMessage, await buildUserMessage(req)],
